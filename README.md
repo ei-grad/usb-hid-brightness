@@ -1,6 +1,6 @@
 # USB HID Brightness Controller
 
-This is a simple utility to control the brightness of USB3 and Thunderbolt monitors providing HID BRIGHTNESS interface over USB like LG UltraFine 5K. It is written in C using the libusb library.
+This is a simple utility to control the brightness of USB and Thunderbolt monitors providing HID BRIGHTNESS interface over USB like LG UltraFine 5K. It is written in C using the libusb library.
 
 ## Prerequisites
 
