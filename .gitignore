@@ -1,0 +1,8 @@
+.cache
+compile_commands.json
+CMakeCache.txt
+CMakeFiles
+Makefile
+cmake_install.cmake
+install_manifest.txt
+usb-hid-brightness
