@@ -29,6 +29,9 @@ git clone https://github.com/ei-grad/usb-hid-brightness.git
 cd usb-hid-brightness
 ```
 
+Create a build directory:
+
+```
 mkdir build
 cd build
 ```
@@ -83,7 +86,9 @@ This will display the current brightness of all found HID brightness devices.
 
 To use `usb-hid-brightness` without needing superuser permissions every time, you can set up a udev rule to grant your user permissions to access the device. Here's an example of such a rule for LG UltraFine Displays:
 
-Create a file in the `/etc/udev/rules.d/` directory to store your udev rules. You can name it something like `99-usb-hid-brightness.rules`:
+Create a file in the `/etc/udev/rules.d/` directory to store your udev rules. You can name it something like `99-usb-hid-brightness.rules`.
+
+In this file, add rules like the following:
 
 ```bash
 # LG UltraFine 24MD4KL
