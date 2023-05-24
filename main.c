@@ -3,7 +3,6 @@
 
 #include <libusb.h>
 
-#include "open_device.h"
 #include "device_list.h"
 
 #define MAX_BRIGHTNESS 54000
