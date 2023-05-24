@@ -3,38 +3,10 @@
 
 #include <libusb.h>
 
+#include "brightness.h"
 #include "device_list.h"
 
 #define MAX_BRIGHTNESS 54000
-
-
-uint16_t get_brightness(libusb_device_handle *hdev) {
-    uint8_t data[6];
-
-    libusb_control_transfer(hdev,
-                            LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE,
-                            LIBUSB_REQUEST_CLEAR_FEATURE, 0x0300, 1, data, 6, 0);
-
-    return (uint16_t)data[0] + ((uint16_t)data[1] << 8);
-}
-
-void set_brightness(libusb_device_handle *hdev, uint16_t val) {
-    uint8_t data[6] = {
-        (uint8_t)(val & 0x00ff),
-        (uint8_t)((val >> 8) & 0x00ff),
-        0x00, 0x00, 0x00, 0x00
-    };
-
-    libusb_control_transfer(hdev,
-                            // cppcheck-suppress badBitmaskCheck
-                            LIBUSB_ENDPOINT_OUT | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE,
-                            LIBUSB_REQUEST_SET_CONFIGURATION, 0x0300, 1, data, 6, 0);
-}
-
-void close_device(libusb_device_handle *hdev) {
-    libusb_close(hdev);
-    libusb_exit(NULL);
-}
 
 int main(int argc, char **argv) {
     if(argc > 2) {
@@ -78,14 +50,14 @@ int main(int argc, char **argv) {
         for (int i = 0; i < device_count; ++i) {
             libusb_device_handle *hdev = device_list[i].handle;
             set_brightness(hdev, (uint16_t)brightness);
-            close_device(hdev);
+            libusb_close(hdev);
         }
     } else {
         for (int i = 0; i < device_count; ++i) {
             libusb_device_handle *hdev = device_list[i].handle;
             uint16_t brightness = get_brightness(hdev);
             printf("%s - %s: %u\n", device_list[i].manufacturer, device_list[i].product, brightness);
-            close_device(hdev);
+            libusb_close(hdev);
         }
     }
 

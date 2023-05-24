@@ -8,6 +8,7 @@ add_executable(
     usb-hid-brightness
     main.c
     device_list.c
+    brightness.c
     #find_by_interface.c
     #open_device_simple.c
     #find_by_id.c
