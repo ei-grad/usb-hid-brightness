@@ -4,6 +4,7 @@ typedef struct DeviceInfo {
     char product[256];
     char manufacturer[256];
     libusb_device_handle *handle;
+    int interface;
 } DeviceInfo;
 
 

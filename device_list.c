@@ -51,10 +51,17 @@ int get_hid_brightness_devices(libusb_context *ctx, DeviceInfo **device_list, in
                     libusb_get_string_descriptor_ascii(hdev, interDesc->iInterface, str_desc, sizeof(str_desc));
 
                     if (strcmp((char *)str_desc, "HID BRIGHTNESS") == 0) {
-                        libusb_get_string_descriptor_ascii(hdev, desc.iProduct, (unsigned char*)(*device_list)[count].product, sizeof((*device_list)[count].product));
-                        libusb_get_string_descriptor_ascii(hdev, desc.iManufacturer, (unsigned char*)(*device_list)[count].manufacturer, sizeof((*device_list)[count].manufacturer));
-                        (*device_list)[count].handle = hdev;
-                        count++;
+                        DeviceInfo *device = &(*device_list)[count++];
+                        libusb_get_string_descriptor_ascii(
+                                hdev, desc.iProduct,
+                                (unsigned char*)device->product,
+                                sizeof(device->product));
+                        libusb_get_string_descriptor_ascii(
+                                hdev, desc.iManufacturer,
+                                (unsigned char*)device->manufacturer,
+                                sizeof(device->manufacturer));
+                        device->handle = hdev;
+                        device->interface = k;
                     }
                 }
             }
