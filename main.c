@@ -49,14 +49,35 @@ int main(int argc, char **argv) {
 
         for (int i = 0; i < device_count; ++i) {
             libusb_device_handle *hdev = device_list[i].handle;
+            libusb_set_auto_detach_kernel_driver(hdev, 1);
+            int ret = libusb_claim_interface(hdev, 1);
+            if (ret != LIBUSB_SUCCESS) {
+                fprintf(stderr, "failed to claim interface: %s\n",
+                        libusb_error_name(ret));
+                libusb_close(hdev);
+                continue;
+            }
             set_brightness(hdev, (uint16_t)brightness);
+            libusb_release_interface(hdev, 1);
+            libusb_attach_kernel_driver(hdev, 1);
             libusb_close(hdev);
         }
     } else {
         for (int i = 0; i < device_count; ++i) {
             libusb_device_handle *hdev = device_list[i].handle;
+            libusb_set_auto_detach_kernel_driver(hdev, 1);
+            int ret = libusb_claim_interface(hdev, 1);
+            if (ret != LIBUSB_SUCCESS) {
+                fprintf(stderr, "failed to claim interface: %s\n",
+                        libusb_error_name(ret));
+                libusb_close(hdev);
+                continue;
+            }
             uint16_t brightness = get_brightness(hdev);
-            printf("%s - %s: %u\n", device_list[i].manufacturer, device_list[i].product, brightness);
+            printf("%s - %s: %u\n", device_list[i].manufacturer,
+                    device_list[i].product, brightness);
+            libusb_release_interface(hdev, 1);
+            libusb_attach_kernel_driver(hdev, 1);
             libusb_close(hdev);
         }
     }
