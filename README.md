@@ -4,58 +4,39 @@ This utility enables brightness control for USB and Thunderbolt monitors that su
 
 ## Prerequisites
 
-- A modern C compiler.
-- CMake version 3.10 or later.
-- libusb development files.
+To build and use this utility, you will need the following:
+* A C compiler (GCC or Clang)
+* CMake, make and pkg-config
+* libusb-1.0 development files
+* libc-dev
 
-You can install libusb and cmake on Ubuntu or other Debian-based Linux distributions using:
+On Ubuntu or Debian, you can install the required packages with:
 
 ```bash
-sudo apt-get install libusb-1.0-0-dev cmake
+sudo apt install -y --no-install-recommends libusb-1.0-0-dev cmake make gcc pkg-config libc-dev
 ```
 
 On Fedora, CentOS, or RHEL, you can use:
 
 ```bash
-sudo dnf install libusb-devel cmake
+sudo dnf install libusb1-devel cmake make gcc pkgconfig glibc-devel
 ```
 
 ## Building
 
-First, clone the repository:
-
 ```bash
 git clone https://github.com/ei-grad/usb-hid-brightness.git
 cd usb-hid-brightness
+cmake -B ./build -DCMAKE_BUILD_TYPE=Release
+cmake --build ./build
 ```
-
-Create a build directory:
-
-```
-mkdir build
-cd build
-```
-
-Next, run `cmake` to configure the build:
-
-```bash
-cmake -DCMAKE_BUILD_TYPE=Release ..
-```
-
-Then build the project:
-
-```bash
-cmake --build .
-```
-
-This will create the `usb-hid-brightness` executable in the build directory.
 
 ## Installing
 
-To install `usb-hid-brightness` system-wide, you will typically need superuser permissions. From the build directory, run:
+To install `usb-hid-brightness` system-wide, you will typically need superuser permissions. You can use the following command to install the utility:
 
 ```bash
-sudo cmake --install .
+sudo cmake --install ./build
 ```
 
 This will install the `usb-hid-brightness` executable to your system's binary directory (usually `/usr/local/bin`), making it available system-wide.
