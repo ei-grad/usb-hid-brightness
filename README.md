@@ -1,6 +1,6 @@
 # USB HID Brightness Controller
 
-This utility enables brightness control for USB and Thunderbolt monitors that support the HID BRIGHTNESS interface, such as the LG UltraFine 5K. It is written in C and utilizes the libusb library.
+This utility enables brightness control for USB and Thunderbolt monitors that support the HID BRIGHTNESS interface, such as the LG UltraFine 5K. It is written in C, utilizes the libusb library, and only works on Linux.
 
 ## Prerequisites
 
@@ -44,6 +44,10 @@ sudo cmake --install ./build
 This will install the `usb-hid-brightness` executable to your system's binary directory (usually `/usr/local/bin`), making it available system-wide.
 
 Remember, to set up a udev rule for the device to allow non-superuser access, follow the instructions in the [Setting up udev rules](#setting-up-udev-rules) section.
+
+There is also:
+- A pre-built binary available in the [Releases](https://github.com/ei-grad/usb-hid-brightness/releases/latest) section of the GitHub repository.
+- AUR package available for Arch Linux users: [usb-hid-brightness](https://aur.archlinux.org/packages/usb-hid-brightness/).
 
 ## Usage
 
