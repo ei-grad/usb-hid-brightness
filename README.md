@@ -31,6 +31,8 @@ cmake -B ./build -DCMAKE_BUILD_TYPE=Release
 cmake --build ./build
 ```
 
+This will build the `usb-hid-brightness` executable in the `build` directory.
+
 ## Installing
 
 To install `usb-hid-brightness` system-wide, you will typically need superuser permissions. You can use the following command to install the utility:
