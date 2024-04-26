@@ -1,6 +1,6 @@
 # USB HID Brightness Controller
 
-This is a simple utility to control the brightness of USB and Thunderbolt monitors providing HID BRIGHTNESS interface over USB like LG UltraFine 5K. It is written in C using the libusb library.
+This utility enables brightness control for USB and Thunderbolt monitors that support the HID BRIGHTNESS interface, such as the LG UltraFine 5K. It is written in C and utilizes the libusb library.
 
 ## Prerequisites
 
@@ -84,11 +84,7 @@ This will display the current brightness of all found HID brightness devices.
 
 ## Setting up udev rules
 
-To use `usb-hid-brightness` without needing superuser permissions every time, you can set up a udev rule to grant your user permissions to access the device. Here's an example of such a rule for LG UltraFine Displays:
-
-Create a file in the `/etc/udev/rules.d/` directory to store your udev rules. You can name it something like `99-usb-hid-brightness.rules`.
-
-In this file, add rules like the following:
+To use usb-hid-brightness without superuser privileges, you can configure a udev rule that grants your user account access to the device. Here's an example of such a rules for LG UltraFine Displays:
 
 ```bash
 # LG UltraFine 24MD4KL
@@ -99,7 +95,9 @@ SUBSYSTEM=="usb", ATTRS{idVendor}=="43e", ATTRS{idProduct}=="9a70", MODE="0666"
 SUBSYSTEM=="usb", ATTRS{idVendor}=="43e", ATTRS{idProduct}=="9a40", MODE="0666"
 ```
 
-In these examples, `"43e"` is the vendor ID for LG, and `"9a63"`, `"9a70"`, and `"9a40"` are the product IDs for specific LG UltraFine Display models. Replace or extend these values with your device's vendor and product IDs. You can find these IDs using the `lsusb` command in your terminal (look for devices named like "LG UltraFine Display Controls").
+Put it into the `/etc/udev/rules.d/` directory, you can name it like `99-usb-hid-brightness.rules`.
+
+In these examples, `"43e"` is the vendor ID for LG, and `"9a63"`, `"9a70"`, and `"9a40"` are the product IDs for specific LG UltraFine Display models. Replace or extend these values with your device's vendor and product IDs. You can find these IDs using the `lsusb` command in your terminal (look for devices named like "LG UltraFine Display Controls"). For other devices, you may need to adjust the vendor and product IDs accordingly.
 
 The `MODE="0666"` part of the rule gives all users read and write permissions for the device.
 
@@ -115,7 +113,7 @@ And trigger the new rules:
 sudo udevadm trigger
 ```
 
-After you unplug and replug the device, you should now be able to use `usb-hid-brightness` without superuser permissions.
+After you unplug and replug the device, you should be able to use `usb-hid-brightness` from your user account without superuser privileges.
 
 Please note, this rule allows all users on the system to read and write to the device, which may not be suitable in a multi-user environment. You might want to create a dedicated group for users who are allowed to control the brightness, and use `GROUP="group-name", MODE="0660"` instead of `MODE="0666"` for a more secure setup.
 
