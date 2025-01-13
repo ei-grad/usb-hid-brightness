@@ -63,13 +63,16 @@ int main(int argc, char **argv) {
         for (int i = 0; i < device_count; ++i) {
             libusb_device_handle *hdev = device_list[i].handle;
             int iface = device_list[i].interface;
-            int ret = libusb_set_auto_detach_kernel_driver(hdev, iface);
+            int ret = 0;
+#ifdef __linux__
+            ret = libusb_set_auto_detach_kernel_driver(hdev, iface);
             if(ret != LIBUSB_SUCCESS) {
                 fprintf(stderr, "Failed to set auto detach kernel driver: %s\n",
                         libusb_error_name(ret));
                 libusb_close(hdev);
                 continue;
             }
+#endif
             ret = libusb_claim_interface(hdev, iface);
             if (ret != LIBUSB_SUCCESS) {
                 fprintf(stderr, "failed to claim interface: %s\n",
@@ -77,6 +80,8 @@ int main(int argc, char **argv) {
                 libusb_close(hdev);
                 continue;
             }
+            printf("Setting brightness to %ld on %s - %s\n", brightness,
+                    device_list[i].manufacturer, device_list[i].product);
             set_brightness(hdev, iface, (uint16_t)brightness);
             libusb_release_interface(hdev, iface);
             libusb_attach_kernel_driver(hdev, iface);

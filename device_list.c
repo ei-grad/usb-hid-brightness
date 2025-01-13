@@ -36,9 +36,10 @@ int get_hid_brightness_devices(libusb_context *ctx, DeviceInfo **device_list, in
 
         libusb_device_handle *hdev = NULL;
         err = libusb_open(dev, &hdev);
-        if (err == LIBUSB_ERROR_ACCESS) continue;
         if (err != 0) {
+#ifndef NDEBUG
             fprintf(stderr, "Failed to open device %d: %s\n", i, libusb_error_name(err));
+#endif
             continue;
         }
 
@@ -59,17 +60,22 @@ int get_hid_brightness_devices(libusb_context *ctx, DeviceInfo **device_list, in
                     const struct libusb_interface_descriptor *interDesc = &interface->altsetting[l];
 
                     unsigned char str_desc[256];
-                    libusb_get_string_descriptor_ascii(hdev, interDesc->iInterface, str_desc, sizeof(str_desc));
+                    err = libusb_get_string_descriptor_ascii(hdev, interDesc->iInterface, str_desc, sizeof(str_desc));
+                    if (err < 0) {
+                        fprintf(stderr, "Failed to get interface string for device %d: %s\n", i, libusb_error_name(err));
+                        continue;
+                    }
 
                     if (strcmp((char *)str_desc, "HID BRIGHTNESS") == 0) {
                         DeviceInfo *device = &(*device_list)[(*device_count)++];
+                        device->handle = hdev;
+                        device->interface = k;
                         err = libusb_get_string_descriptor_ascii(
                                 hdev, desc.iProduct,
                                 (unsigned char*)device->product,
                                 sizeof(device->product));
                         if (err < 0) {
                             fprintf(stderr, "Failed to get product string for device %d: %s\n", i, libusb_error_name(err));
-                            continue;
                         }
                         err = libusb_get_string_descriptor_ascii(
                                 hdev, desc.iManufacturer,
@@ -77,10 +83,7 @@ int get_hid_brightness_devices(libusb_context *ctx, DeviceInfo **device_list, in
                                 sizeof(device->manufacturer));
                         if (err < 0) {
                             fprintf(stderr, "Failed to get manufacturer string for device %d: %s\n", i, libusb_error_name(err));
-                            continue;
                         }
-                        device->handle = hdev;
-                        device->interface = k;
                     }
                 }
             }
