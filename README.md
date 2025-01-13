@@ -75,11 +75,11 @@ To use usb-hid-brightness without superuser privileges, you can configure a udev
 
 ```bash
 # LG UltraFine 24MD4KL
-SUBSYSTEM=="usb", ATTRS{idVendor}=="43e", ATTRS{idProduct}=="9a63", MODE="0666"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="043e", ATTRS{idProduct}=="9a63", MODE="0666"
 # LG UltraFine 27MD5KL
-SUBSYSTEM=="usb", ATTRS{idVendor}=="43e", ATTRS{idProduct}=="9a70", MODE="0666"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="043e", ATTRS{idProduct}=="9a70", MODE="0666"
 # LG UltraFine 27MD5KA
-SUBSYSTEM=="usb", ATTRS{idVendor}=="43e", ATTRS{idProduct}=="9a40", MODE="0666"
+SUBSYSTEM=="usb", ATTRS{idVendor}=="043e", ATTRS{idProduct}=="9a40", MODE="0666"
 ```
 
 Put it into the `/etc/udev/rules.d/` directory, you can name it like `99-usb-hid-brightness.rules`.
@@ -100,7 +100,7 @@ And trigger the new rules:
 sudo udevadm trigger
 ```
 
-After you unplug and replug the device, you should be able to use `usb-hid-brightness` from your user account without superuser privileges.
+Now you should be able to use `usb-hid-brightness` from your user account without superuser privileges.
 
 Please note, this rule allows all users on the system to read and write to the device, which may not be suitable in a multi-user environment. You might want to create a dedicated group for users who are allowed to control the brightness, and use `GROUP="group-name", MODE="0660"` instead of `MODE="0666"` for a more secure setup.
 
