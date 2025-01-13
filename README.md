@@ -33,6 +33,19 @@ cmake --build ./build
 
 This will build the `usb-hid-brightness` executable in the `build` directory.
 
+### Windows build (MSYS2 MinGW-w64)
+
+Install MSYS2 from https://www.msys2.org/, then run the following commands in the MSYS2 terminal:
+
+```
+pacman -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake mingw-w64-x86_64-pkg-config mingw-w64-x86_64-libusb
+# to build a static executable (which will not require libusb-1.0.dll), use the following command:
+cmake -B build -DCMAKE_EXE_LINKER_FLAGS="-static" -DCMAKE_BUILD_TYPE=Release
+# or, if you wish just to build a usual dynamic executable:
+#cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+```
+
 ## Installing
 
 To install `usb-hid-brightness` system-wide, you will typically need superuser permissions. You can use the following command to install the binary built in the previous step:
@@ -48,6 +61,20 @@ Remember, to set up a udev rule for the device to allow non-superuser access, fo
 There is also:
 - A pre-built binary available in the [Releases](https://github.com/ei-grad/usb-hid-brightness/releases/latest) section of the GitHub repository.
 - AUR package available for Arch Linux users: [usb-hid-brightness](https://aur.archlinux.org/packages/usb-hid-brightness/).
+
+### Windows
+
+I'd recommend to make a couple of .bat files on your desktop to run the utility with the desired brightness level. Or a .bat file which prompt you to enter the desired brightness level before running the utility. Here's an example:
+
+```bat
+@echo off
+set /p brightness=Enter brightness level (0-54000):
+path/to/usb-hid-brightness.exe %brightness%
+```
+
+(Replace `path/to/usb-hid-brightness.exe` with the actual path to the executable.)
+
+This will prompt you to enter the desired brightness level and then run the utility with the entered value.
 
 ## Usage
 
