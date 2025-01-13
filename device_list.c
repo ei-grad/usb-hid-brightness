@@ -10,7 +10,9 @@ int get_hid_brightness_devices(libusb_context *ctx, DeviceInfo **device_list, in
     libusb_device **devs;
     libusb_device *dev;
     int i = 0;
-    int count = 0;
+    int err = 0;
+
+    *device_count = 0;
 
     ssize_t cnt = libusb_get_device_list(ctx, &devs);
     if (cnt < 0) {
@@ -28,18 +30,27 @@ int get_hid_brightness_devices(libusb_context *ctx, DeviceInfo **device_list, in
     while ((dev = devs[i++]) != NULL) {
         struct libusb_device_descriptor desc;
         if (libusb_get_device_descriptor(dev, &desc) < 0) {
+            fprintf(stderr, "Failed to get device %d descriptor: %s\n", i, libusb_error_name(err));
             continue;
         }
 
         libusb_device_handle *hdev = NULL;
-        libusb_open(dev, &hdev);
-        if (!hdev) {
+        err = libusb_open(dev, &hdev);
+        if (err == LIBUSB_ERROR_ACCESS) continue;
+        if (err != 0) {
+            fprintf(stderr, "Failed to open device %d: %s\n", i, libusb_error_name(err));
             continue;
         }
 
         for (int j = 0; j < desc.bNumConfigurations; ++j) {
+
             struct libusb_config_descriptor *config;
-            libusb_get_config_descriptor(dev, j, &config);
+            err = libusb_get_config_descriptor(dev, j, &config);
+            if(err != 0) {
+                fprintf(stderr, "Failed to get config descriptor for device %d configuration %d: %s\n",
+                        i, j, libusb_error_name(err));
+                continue;
+            }
 
             for (int k = 0; k < config->bNumInterfaces; ++k) {
                 const struct libusb_interface *interface = &config->interface[k];
@@ -51,15 +62,23 @@ int get_hid_brightness_devices(libusb_context *ctx, DeviceInfo **device_list, in
                     libusb_get_string_descriptor_ascii(hdev, interDesc->iInterface, str_desc, sizeof(str_desc));
 
                     if (strcmp((char *)str_desc, "HID BRIGHTNESS") == 0) {
-                        DeviceInfo *device = &(*device_list)[count++];
-                        libusb_get_string_descriptor_ascii(
+                        DeviceInfo *device = &(*device_list)[(*device_count)++];
+                        err = libusb_get_string_descriptor_ascii(
                                 hdev, desc.iProduct,
                                 (unsigned char*)device->product,
                                 sizeof(device->product));
-                        libusb_get_string_descriptor_ascii(
+                        if (err < 0) {
+                            fprintf(stderr, "Failed to get product string for device %d: %s\n", i, libusb_error_name(err));
+                            continue;
+                        }
+                        err = libusb_get_string_descriptor_ascii(
                                 hdev, desc.iManufacturer,
                                 (unsigned char*)device->manufacturer,
                                 sizeof(device->manufacturer));
+                        if (err < 0) {
+                            fprintf(stderr, "Failed to get manufacturer string for device %d: %s\n", i, libusb_error_name(err));
+                            continue;
+                        }
                         device->handle = hdev;
                         device->interface = k;
                     }
@@ -71,7 +90,6 @@ int get_hid_brightness_devices(libusb_context *ctx, DeviceInfo **device_list, in
 
     libusb_free_device_list(devs, 1);
 
-    *device_count = count;
     return 0;
 }
 
