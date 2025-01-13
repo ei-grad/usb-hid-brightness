@@ -11,7 +11,7 @@
 
 int main(int argc, char **argv) {
     if(argc > 2) {
-        printf("Usage: %s [0-54000]\n", argv[0]);
+        fprintf(stderr, "Usage: %s [0-54000]\n", argv[0]);
         return EXIT_FAILURE;
     }
 
@@ -48,14 +48,14 @@ int main(int argc, char **argv) {
 
         // Check if the input is not a valid integer
         if (endptr == argv[1] || *endptr != '\0') {
-            printf("Usage: %s [0-54000]\n", argv[0]);
+            fprintf(stderr, "Usage: %s [0-54000]\n", argv[0]);
             libusb_exit(ctx);
             return EXIT_FAILURE;
         }
 
         // Check for overflow or underflow
         if (errno == ERANGE || brightness < 0 || brightness > MAX_BRIGHTNESS) {
-            printf("Usage: %s [0-54000]\n", argv[0]);
+            fprintf(stderr, "Usage: %s [0-54000]\n", argv[0]);
             libusb_exit(ctx);
             return EXIT_FAILURE;
         }
@@ -63,8 +63,14 @@ int main(int argc, char **argv) {
         for (int i = 0; i < device_count; ++i) {
             libusb_device_handle *hdev = device_list[i].handle;
             int iface = device_list[i].interface;
-            libusb_set_auto_detach_kernel_driver(hdev, iface);
-            int ret = libusb_claim_interface(hdev, iface);
+            int ret = libusb_set_auto_detach_kernel_driver(hdev, iface);
+            if(ret != LIBUSB_SUCCESS) {
+                fprintf(stderr, "Failed to set auto detach kernel driver: %s\n",
+                        libusb_error_name(ret));
+                libusb_close(hdev);
+                continue;
+            }
+            ret = libusb_claim_interface(hdev, iface);
             if (ret != LIBUSB_SUCCESS) {
                 fprintf(stderr, "failed to claim interface: %s\n",
                         libusb_error_name(ret));
@@ -80,8 +86,14 @@ int main(int argc, char **argv) {
         for (int i = 0; i < device_count; ++i) {
             libusb_device_handle *hdev = device_list[i].handle;
             int iface = device_list[i].interface;
-            libusb_set_auto_detach_kernel_driver(hdev, iface);
-            int ret = libusb_claim_interface(hdev, iface);
+            int ret = libusb_set_auto_detach_kernel_driver(hdev, iface);
+            if(ret != LIBUSB_SUCCESS) {
+                fprintf(stderr, "Failed to set auto detach kernel driver: %s\n",
+                        libusb_error_name(ret));
+                libusb_close(hdev);
+                continue;
+            }
+            ret = libusb_claim_interface(hdev, iface);
             if (ret != LIBUSB_SUCCESS) {
                 fprintf(stderr, "failed to claim interface: %s\n",
                         libusb_error_name(ret));
