@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #include <libusb.h>
 
@@ -40,9 +41,21 @@ int main(int argc, char **argv) {
     }
 
     if (argc == 2) {
-        int brightness = atoi(argv[1]);
-        if (brightness < 0 || brightness > MAX_BRIGHTNESS) {
-            fprintf(stderr, "Brightness should be a number between 0 and %d\n", MAX_BRIGHTNESS);
+
+        char *endptr;
+        errno = 0; // Reset errno before calling strtol
+        long brightness = strtol(argv[1], &endptr, 10);
+
+        // Check if the input is not a valid integer
+        if (endptr == argv[1] || *endptr != '\0') {
+            printf("Usage: %s [0-54000]\n", argv[0]);
+            libusb_exit(ctx);
+            return EXIT_FAILURE;
+        }
+
+        // Check for overflow or underflow
+        if (errno == ERANGE || brightness < 0 || brightness > MAX_BRIGHTNESS) {
+            printf("Usage: %s [0-54000]\n", argv[0]);
             libusb_exit(ctx);
             return EXIT_FAILURE;
         }
