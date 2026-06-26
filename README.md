@@ -5,7 +5,7 @@ This utility allows you to control the brightness of USB and Thunderbolt monitor
 * Displays exposing a `HID BRIGHTNESS` interface, such as the LG UltraFine.
 * Apple displays (Studio Display and Pro Display XDR), detected by their USB vendor/product id.
 
-Written in C and powered by the libusb library, it is compatible with Linux and Windows. While it may also work on macOS, these monitors usually support native brightness control on that platform.
+Written in C and powered by the libusb library, it runs on Linux. Windows support is implemented but **has not been tested yet** (see [Windows](#windows)). While it may also work on macOS, these monitors usually support native brightness control on that platform.
 
 ## Prerequisites
 
@@ -69,7 +69,11 @@ There is also:
 
 ### Windows
 
-I'd recommend to make a couple of .bat files on your desktop to run the utility with the desired brightness level. Or a .bat file which prompt you to enter the desired brightness level before running the utility. Here's an example:
+> **Note:** Windows support has not been tested yet. The steps below are expected to be required but are unverified — feedback is welcome.
+
+On Windows, libusb can only access a device bound to the WinUSB (or libusbK) driver. The display's brightness interface is normally claimed by the built-in Windows HID driver, so you will likely need to assign WinUSB to that interface using [Zadig](https://zadig.akeo.ie/) before the utility can detect the display.
+
+Once the driver is in place, I'd recommend to make a couple of .bat files on your desktop to run the utility with the desired brightness level. Or a .bat file which prompt you to enter the desired brightness level before running the utility. Here's an example:
 
 ```bat
 @echo off
