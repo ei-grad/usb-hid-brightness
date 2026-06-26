@@ -1,0 +1,19 @@
+[Unit]
+Description=Mirror GNOME brightness keys to an external USB HID display
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+# Map the GNOME brightness percentage to your display's value range.
+# Defaults (set in the script) suit the Apple Studio Display: 400-60000.
+#   Apple Studio Display / Pro Display XDR: MIRROR_MIN=400  MIRROR_MAX=60000
+#   LG UltraFine:                           MIRROR_MIN=0    MIRROR_MAX=54000
+#Environment=MIRROR_MIN=3000
+#Environment=MIRROR_MAX=60000
+ExecStart=%h/.local/bin/gnome-brightness-mirror.py
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=graphical-session.target

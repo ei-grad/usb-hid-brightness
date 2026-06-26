@@ -144,6 +144,14 @@ Now you should be able to use `usb-hid-brightness` from your user account withou
 
 Please note, this rule allows all users on the system to read and write to the device, which may not be suitable in a multi-user environment. You might want to create a dedicated group for users who are allowed to control the brightness, and use `GROUP="group-name", MODE="0660"` instead of `MODE="0666"` for a more secure setup.
 
+## Binding to the brightness keys (GNOME)
+
+On GNOME the multimedia brightness keys only control the built-in laptop screen.
+The optional [`contrib/gnome-brightness-mirror`](contrib/gnome-brightness-mirror/)
+daemon mirrors the GNOME brightness level onto an external display via this
+utility, so the keys adjust the external monitor too. See its
+[README](contrib/gnome-brightness-mirror/README.md) for setup.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request or open an Issue on the GitHub repository.
