@@ -1,6 +1,11 @@
 # USB HID Brightness Controller
 
-This utility allows you to control the brightness of USB and Thunderbolt monitors that support the HID BRIGHTNESS interface, such as the LG UltraFine. Written in C and powered by the libusb library, it is compatible with Linux and Windows. While it may also work on macOS, these monitors usually support native brightness control on that platform.
+This utility allows you to control the brightness of USB and Thunderbolt monitors over USB HID. It supports two kinds of devices:
+
+* Displays exposing a `HID BRIGHTNESS` interface, such as the LG UltraFine.
+* Apple displays (Studio Display and Pro Display XDR), detected by their USB vendor/product id.
+
+Written in C and powered by the libusb library, it is compatible with Linux and Windows. While it may also work on macOS, these monitors usually support native brightness control on that platform.
 
 ## Prerequisites
 
@@ -86,7 +91,7 @@ To set the brightness:
 usb-hid-brightness 27000
 ```
 
-This sets the brightness of all found HID brightness devices to 27000 (out of a maximum of 54000).
+This sets the brightness of all found HID brightness devices to 27000. The accepted range depends on the device: LG UltraFine accepts `0`–`54000`, while Apple displays accept `400`–`60000`. Values outside a device's range are skipped for that device.
 
 To get the current brightness:
 
@@ -98,7 +103,7 @@ This will display the current brightness of all found HID brightness devices.
 
 ## Setting up udev rules
 
-To use usb-hid-brightness without superuser privileges, you can configure a udev rule that grants your user account access to the device. Here's an example of such a rules for LG UltraFine Displays:
+To use usb-hid-brightness without superuser privileges, you can configure a udev rule that grants your user account access to the device. Here's an example of such rules for LG UltraFine and Apple displays:
 
 ```bash
 # LG UltraFine 24MD4KL
@@ -107,6 +112,10 @@ SUBSYSTEM=="usb", ATTRS{idVendor}=="043e", ATTRS{idProduct}=="9a63", MODE="0666"
 SUBSYSTEM=="usb", ATTRS{idVendor}=="043e", ATTRS{idProduct}=="9a70", MODE="0666"
 # LG UltraFine 27MD5KA
 SUBSYSTEM=="usb", ATTRS{idVendor}=="043e", ATTRS{idProduct}=="9a40", MODE="0666"
+# Apple Studio Display
+SUBSYSTEM=="usb", ATTRS{idVendor}=="05ac", ATTRS{idProduct}=="1114", MODE="0666"
+# Apple Pro Display XDR
+SUBSYSTEM=="usb", ATTRS{idVendor}=="05ac", ATTRS{idProduct}=="9243", MODE="0666"
 ```
 
 Put it into the `/etc/udev/rules.d/` directory, you can name it like `99-usb-hid-brightness.rules`.
